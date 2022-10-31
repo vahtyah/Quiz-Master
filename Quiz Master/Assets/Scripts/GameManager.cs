@@ -6,18 +6,16 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     Quiz quiz;
-    EndScreen endScreen;
+    [SerializeField]EndScreen endScreen;
 
     private void Awake()
     {
         quiz = FindObjectOfType<Quiz>();
-        endScreen = FindObjectOfType<EndScreen>();
     }
 
     private void Start()
     {
         quiz.gameObject.SetActive(true);
-        endScreen.gameObject.SetActive(false);
     }
 
     private void Update()

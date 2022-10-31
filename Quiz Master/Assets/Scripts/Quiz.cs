@@ -16,11 +16,16 @@ public class Quiz : MonoBehaviour
     [Header("Answers")]
     [SerializeField] GameObject[] answerButtons;
     int correctAnswerIndex;
+    int currentAnswerIndex = -1;
     bool hasAnseredEarly = true;
+
+    [Header("Button control")]
+    [SerializeField] GameObject[] buttonControl = new GameObject[2];
 
     [Header("Button Colors")]
     [SerializeField] Sprite defaultAnswerSprite;
     [SerializeField] Sprite correctAnswerSprite;
+    [SerializeField] Sprite wrongAnswerSprite;
 
     [Header("Timer")]
     [SerializeField] Image timerImage;
@@ -60,7 +65,7 @@ public class Quiz : MonoBehaviour
         }
         else if (!hasAnseredEarly && !timer.isAnsweringQuestion)
         {
-            DisplayAnswer();
+            //DisplayAnswer();
         }
     }
 
@@ -73,20 +78,47 @@ public class Quiz : MonoBehaviour
         }
     }
 
+    //public void OnAnswerSelected(int index)
+    //{
+    //    hasAnseredEarly = true;
+    //    DisplayAnswer();
+    //    SetButtonState(false);
+    //    timer.CancelTimer();
+    //    scoreText.text = "Score: " + scoreKeeper.CalculateScore() + "%";
+    //}
+
     public void OnAnswerSelected(int index)
     {
-        hasAnseredEarly = true;
-        DisplayAnswer();
-        SetButtonState(false);
-        timer.CancelTimer();
-        scoreText.text = "Score: " + scoreKeeper.CalculateScore() + "%";
-
+        currentAnswerIndex = index;
+        print(currentAnswerIndex);
     }
 
-    private void DisplayAnswer()
+    public void ConfirmAnswer()
     {
-        answerButtons[currentQuestion.GetCorrectAnswerIndex()].GetComponent<Image>().sprite = correctAnswerSprite;
-        scoreKeeper.IncrementCorrectAnswers(); //correct
+        if (currentAnswerIndex != -1)
+        {
+            hasAnseredEarly = true;
+            timer.CancelTimer();
+            if (currentAnswerIndex == currentQuestion.GetCorrectAnswerIndex())
+            {
+                answerButtons[currentAnswerIndex].GetComponent<Image>().sprite = correctAnswerSprite;
+            }
+            else
+            {
+                answerButtons[currentAnswerIndex].GetComponent<Image>().sprite = wrongAnswerSprite;
+                answerButtons[currentQuestion.GetCorrectAnswerIndex()].GetComponent<Image>().sprite = correctAnswerSprite;
+                scoreKeeper.IncrementCorrectAnswers();
+                scoreText.text = "Score: " + scoreKeeper.CalculateScore() + "%";
+            }
+            SetButtonState(false);
+        }
+    }
+
+    public void SkipQuestion()
+    {
+        SetButtonState(false);
+        timer.CancelTimer();
+        hasAnseredEarly = true;
     }
 
     void GetNextQuestion()
@@ -113,14 +145,14 @@ public class Quiz : MonoBehaviour
     private void SetDefaultButtonSprites()
     {
         for (int i = 0; i < answerButtons.Length; i++)
-        {
             answerButtons[i].GetComponent<Image>().sprite = defaultAnswerSprite;
-        }
     }
 
     void SetButtonState(bool state)
     {
         for (int i = 0; i < answerButtons.Length; i++)
             answerButtons[i].GetComponent<Button>().interactable = state;
+        for (int i = 0; i < buttonControl.Length; i++)
+            buttonControl[i].GetComponent<Button>().interactable = state;
     }
 }
