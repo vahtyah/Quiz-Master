@@ -78,19 +78,9 @@ public class Quiz : MonoBehaviour
         }
     }
 
-    //public void OnAnswerSelected(int index)
-    //{
-    //    hasAnseredEarly = true;
-    //    DisplayAnswer();
-    //    SetButtonState(false);
-    //    timer.CancelTimer();
-    //    scoreText.text = "Score: " + scoreKeeper.CalculateScore() + "%";
-    //}
-
     public void OnAnswerSelected(int index)
     {
         currentAnswerIndex = index;
-        print(currentAnswerIndex);
     }
 
     public void ConfirmAnswer()
@@ -102,14 +92,14 @@ public class Quiz : MonoBehaviour
             if (currentAnswerIndex == currentQuestion.GetCorrectAnswerIndex())
             {
                 answerButtons[currentAnswerIndex].GetComponent<Image>().sprite = correctAnswerSprite;
+                scoreKeeper.IncrementCorrectAnswers();
             }
             else
             {
                 answerButtons[currentAnswerIndex].GetComponent<Image>().sprite = wrongAnswerSprite;
                 answerButtons[currentQuestion.GetCorrectAnswerIndex()].GetComponent<Image>().sprite = correctAnswerSprite;
-                scoreKeeper.IncrementCorrectAnswers();
-                scoreText.text = "Score: " + scoreKeeper.CalculateScore() + "%";
             }
+            scoreText.text = "Score: " + scoreKeeper.CalculateScore() + "%";
             SetButtonState(false);
         }
     }
@@ -119,6 +109,7 @@ public class Quiz : MonoBehaviour
         SetButtonState(false);
         timer.CancelTimer();
         hasAnseredEarly = true;
+        scoreText.text = "Score: " + scoreKeeper.CalculateScore() + "%";
     }
 
     void GetNextQuestion()
@@ -138,7 +129,7 @@ public class Quiz : MonoBehaviour
     {
         int index = Random.Range(0, questionSOs.Count);
         currentQuestion = questionSOs[index];
-        if(questionSOs.Contains(currentQuestion))
+        if (questionSOs.Contains(currentQuestion))
             questionSOs.Remove(currentQuestion);
     }
 
