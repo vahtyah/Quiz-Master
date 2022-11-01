@@ -1,3 +1,3 @@
 # Quiz Master
  
-//Add question by button or file?
+//Add question by button (add scriptableObject) or file?
